@@ -224,7 +224,7 @@
             const t = document.getElementById("content").value;
             if (t) {
                 const tip = document.getElementById("tip");
-                tip.innerText = "开玩笑的 留言也没用 我技术还不能同步留言";
+                tip.innerText = "开玩笑的 留言也没用 我技术还不能同步留言，找我私聊吧";
                 tip.style.display = "block";
                 document.getElementById("smile").style.display = "block";
                 document.getElementById("content").value = "";
@@ -234,3 +234,215 @@
 </body>
 </html>
 
+<style>
+.newhot {
+  position: relative;
+  margin-top: 22px;
+  text-align: center;
+}
+.newhot::before {
+  content: "新活动";
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translate(-50%) rotate(-10deg);
+  font-size: 22px;
+  font-weight: bold;
+  color: gold;
+  text-shadow: 0 0 8px #ffaa00;
+  z-index: 10;
+}
+.newhot button {
+  transform: scale(1.25);
+  margin: 10px 0;
+}
+
+.lottery-page {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #1a1a2e;
+  z-index: 999;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.lottery-btn-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 22px 0;
+}
+
+.lottery-btn {
+  background: gold;
+  color: #000;
+  font-size: 22px;
+  padding: 16px 34px;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
+}
+
+.help-btn {
+  width: 30px;
+  height: 30px;
+  background: #444;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.run {
+  animation: shake 0.5s linear infinite;
+}
+@keyframes shake {
+  0%{transform: rotate(0deg);}
+  25%{transform: rotate(5deg);}
+  50%{transform: rotate(0deg);}
+  75%{transform: rotate(-5deg);}
+  100%{transform: rotate(0deg);}
+}
+
+.result {
+  font-size: 24px;
+  color: #fff;
+  margin: 22px 0;
+  min-height: 32px;
+}
+.count {
+  color: #ccc;
+  margin: 10px 0;
+  font-size: 16px;
+}
+.small-tip {
+  color: #ffeb3b;
+  font-size: 14px;
+  margin-top: 10px;
+}
+.tip-text {
+  color: #ffeb3b;
+  margin-top: 26px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.back-btn {
+  background: #666;
+  color: #fff;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 26px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.7); z-index:1000;
+}
+.rate-box {
+  position: absolute;
+  top: 50%; left:50%; transform:translate(-50%,-50%);
+  background:#222; color:#fff; padding:20px; border-radius:10px;
+  width: 280px; text-align:left;
+}
+.rate-box p {
+  margin: 6px 0;
+  font-size: 15px;
+}
+.close-btn {
+  margin-top:15px;
+  background:#e94560; color:#fff; border:none;
+  padding:8px 16px; border-radius:6px;
+}
+</style>
+
+<div class="newhot">
+  <button onclick="openLottery()">抽奖</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="rate-box">
+    <p>🎁 神秘现金大奖暂时保密：0.5%</p>
+    <p>🗣️ 骂FOTE两分钟：30%</p>
+    <p>👍 获得FOTE夸奖：30%</p>
+    <p>😢 没抽到～：39.4%</p>
+    <p>💰 隐藏现金大奖：0.1%</p>
+    <button class="close-btn" onclick="closeRate()">关闭</button>
+  </div>
+</div>
+
+<div class="lottery-page" id="lotteryPage">
+  <h2>🎉 FOTE 抽奖 🎉</h2>
+  <div class="small-tip">有 0.1% 几率现金大奖，完善后抽到可兑换</div>
+  <div class="count" id="count">抽奖次数：0</div>
+
+  <div class="lottery-btn-wrap">
+    <button class="lottery-btn" id="lbtn" onclick="startDraw()">开始抽奖</button>
+    <div class="help-btn" onclick="showRate()">?</div>
+  </div>
+
+  <div class="result" id="result"></div>
+  <div class="tip-text">本来要搞一个抽奖限制的，但是目前还没想到方法，所以现在先试着，等做完了，可以截屏兑换</div>
+  <button class="back-btn" onclick="closeLottery()">返回</button>
+</div>
+
+<script>
+let drawCount = 0;
+function openLottery() {
+  document.getElementById("lotteryPage").style.display = "block";
+}
+function closeLottery() {
+  document.getElementById("lotteryPage").style.display = "none";
+}
+
+function showRate() {
+  document.getElementById("overlay").style.display = "block";
+}
+function closeRate() {
+  document.getElementById("overlay").style.display = "none";
+}
+
+function startDraw() {
+  let btn = document.getElementById("lbtn");
+  let resBox = document.getElementById("result");
+  btn.disabled = true;
+  btn.classList.add("run");
+  resBox.innerHTML = "抽奖中...";
+
+  setTimeout(() => {
+    btn.classList.remove("run");
+    btn.disabled = false;
+    draw();
+  }, 600);
+}
+
+function draw() {
+  drawCount++;
+  document.getElementById("count").innerText = "抽奖次数：" + drawCount;
+  let r = Math.random() * 100;
+  let res;
+
+  if (r < 0.1) {
+    res = "💰 现金大奖！可兑换";
+  } else if (r < 0.6) {
+    res = "🎁 FOTE的一块钱";
+  } else if (r < 30.6) {
+    res = "🗣️ 骂FOTE两分钟，FOTE无法反驳";
+  } else if (r < 60.6) {
+    res = "👍 获得FOTE的夸奖";
+  } else {
+    res = "😢 没抽到～<span style='color: #00ff00;'>菜</span>";
+  }
+
+  document.getElementById("result").innerHTML = res;
+}
+</script>
