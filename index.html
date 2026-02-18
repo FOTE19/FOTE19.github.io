@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>FOTE19.github.io</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1a1a2e;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .login {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        h1 {
+            color: #e94560;
+            margin-bottom: 30px;
+        }
+        .login-box {
+            background: #16231e;
+            padding: 30px;
+            border-radius: 10px;
+            width: 280px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            background: #0f3646;
+            color: #fff;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #e94560;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .error {
+            color: #ff4444;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            font-size: 20px;
+        }
+        .full-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            font-size: 80vh;
+            animation: fadeOut 1s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+        .success {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 15;
+            overflow-y: auto;
+        }
+        .welcome-text {
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 20px 0;
+            max-width: 600px;
+        }
+        .message-box {
+            background: #16231e;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: #0f3646;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            resize: none;
+        }
+        #messages {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .message {
+            background: #0f3646;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 8px 0;
+        }
+        #tip {
+            margin-top: 15px;
+            color: #ffeb3b;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+        .rotating-smile {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 40px;
+            animation: rotate 0.2s linear infinite;
+            display: none;
+            z-index: 999;
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login" id="loginPage">
+        <h1>FOTE大人的网站</h1>
+        <div class="login-box">
+            <input type="password" id="pwd" placeholder="输入密码登录">
+            <div id="errorMsg" class="error">孩子不知道密码就别试了～</div>
+            <button onclick="go()">登录</button>
+        </div>
+    </div>
+
+    <div class="loading" id="loadingPage">正在进入...</div>
+    <div class="full-face" id="fullFace">😎</div>
+
+    <div class="success" id="successPage">
+        <div class="welcome-text">
+            你竟然成功进来了，嗯对后面我还没想好干嘛，可以在这留言建议，我们一起搭建一个牛逼网站
+        </div>
+        <div class="message-box">
+            <textarea id="content" placeholder="写点建议..."></textarea>
+            <button onclick="sub()">提交留言</button>
+            <div id="tip"></div>
+        </div>
+        <div id="messages"></div>
+    </div>
+
+    <div class="rotating-smile" id="smile">😊</div>
+
+    <script>
+        function go() {
+            const pwd = document.getElementById("pwd").value;
+            const errorMsg = document.getElementById("errorMsg");
+            if (pwd === "1919") {
+                errorMsg.style.display = "none";
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("loadingPage").style.display = "flex";
+                
+                setTimeout(() => {
+                    document.getElementById("loadingPage").style.display = "none";
+                    const fullFace = document.getElementById("fullFace");
+                    fullFace.style.display = "flex";
+                    
+                    setTimeout(() => {
+                        fullFace.style.display = "none";
+                        document.getElementById("successPage").style.display = "flex";
+                    }, 1000);
+                }, 500);
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+
+        function sub() {
+            const t = document.getElementById("content").value;
+            if (t) {
+                const tip = document.getElementById("tip");
+                tip.innerText = "开玩笑的 留言也没用 我技术还不能同步留言";
+                tip.style.display = "block";
+                document.getElementById("smile").style.display = "block";
+                document.getElementById("content").value = "";
+            }
+        }
+    </script>
+</body>
+</html>
+
