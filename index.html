@@ -183,6 +183,10 @@
     <div class="full-face" id="fullFace">😎</div>
 
     <div class="success" id="successPage">
+        showLotteryEntry();
+        }, 1000);
+   }, 500);
+ }
         <div class="welcome-text">
             你竟然成功进来了，嗯对后面我还没想好干嘛，可以在这留言建议，我们一起搭建一个牛逼网站
         </div>
@@ -235,28 +239,31 @@
 </html>
 
 <style>
+/* 主页面抽奖按钮区域 */
 .newhot {
   position: relative;
-  margin-top: 22px;
+  margin-top: 30px;
   text-align: center;
+  display: none; /* 默认隐藏，登录后才显示 */
 }
 .newhot::before {
-  content: "右上角按钮是新活动";
+  content: "新活动";
   position: absolute;
-  top: 18px;
+  top: -25px;
   left: 50%;
   transform: translate(-50%) rotate(-10deg);
-  font-size: 22px;
+  font-size: 28px; /* 更大更醒目 */
   font-weight: bold;
   color: gold;
-  text-shadow: 0 0 8px #ffaa00;
+  text-shadow: 0 0 10px #ffaa00;
   z-index: 10;
 }
 .newhot button {
-  transform: scale(1.25);
-  margin: 10px 0;
+  transform: scale(1.4);
+  margin: 25px 0 10px;
 }
 
+/* 抽奖页面 */
 .lottery-page {
   display: none;
   position: fixed;
@@ -269,7 +276,6 @@
   padding: 60px 20px;
   text-align: center;
 }
-
 .lottery-btn-wrap {
   display: flex;
   align-items: center;
@@ -277,7 +283,6 @@
   gap: 10px;
   margin: 22px 0;
 }
-
 .lottery-btn {
   background: gold;
   color: #000;
@@ -287,7 +292,6 @@
   border: none;
   font-weight: bold;
 }
-
 .help-btn {
   width: 30px;
   height: 30px;
@@ -299,7 +303,7 @@
   font-size: 16px;
   cursor: pointer;
 }
-
+/* 抽奖动画 */
 .run {
   animation: shake 0.5s linear infinite;
 }
@@ -310,7 +314,6 @@
   75%{transform: rotate(-5deg);}
   100%{transform: rotate(0deg);}
 }
-
 .result {
   font-size: 24px;
   color: #fff;
@@ -342,6 +345,7 @@
   margin-top: 26px;
 }
 
+/* 概率弹窗 */
 .overlay {
   display: none;
   position: fixed;
@@ -365,10 +369,12 @@
 }
 </style>
 
-<div class="newhot">
+<!-- 主页面抽奖入口 -->
+<div class="newhot" id="lotteryEntry">
   <button onclick="openLottery()">抽奖</button>
 </div>
 
+<!-- 概率说明弹窗 -->
 <div class="overlay" id="overlay">
   <div class="rate-box">
     <p>🎁 神秘现金大奖暂时保密：0.5%</p>
@@ -380,6 +386,7 @@
   </div>
 </div>
 
+<!-- 抽奖页面 -->
 <div class="lottery-page" id="lotteryPage">
   <h2>🎉 FOTE 抽奖 🎉</h2>
   <div class="small-tip">有 0.1% 几率现金大奖，完善后抽到可兑换</div>
@@ -397,6 +404,12 @@
 
 <script>
 let drawCount = 0;
+
+// 登录成功后，调用这个函数显示抽奖按钮
+function showLotteryEntry() {
+  document.getElementById("lotteryEntry").style.display = "block";
+}
+
 function openLottery() {
   document.getElementById("lotteryPage").style.display = "block";
 }
